@@ -1,22 +1,172 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配置后端IP</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px); /* Adjust for padding */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            min-height: 1.2em; /* Reserve space */
+        }
+        .status.error {
+            color: #dc3545;
+        }
+        .status.success {
+             color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>配置后端服务IP地址</h1>
+        <p>请输入您的WiFi防御系统后端服务的局域网IP地址。</p>
+        <label for="backendIpInput">后端IP地址:</label>
+        <input type="text" id="backendIpInput" placeholder="例如: 192.168.1.100">
+        <button id="connectButton">连接并验证</button>
+        <div class="status" id="statusMessage"></div>
+    </div>
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
+    <script>
+        const ipInput = document.getElementById('backendIpInput');
+        const connectButton = document.getElementById('connectButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const backendPort = 8000; // 后端服务端口
 
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
-    </body>
+        // 尝试从 localStorage 加载上次成功的IP
+        const savedIp = localStorage.getItem('backendIp');
+        if (savedIp) {
+            ipInput.value = savedIp;
+        }
+
+        connectButton.addEventListener('click', async () => {
+            const enteredIp = ipInput.value.trim();
+            if (!enteredIp) {
+                displayStatus('请输入IP地址', 'error');
+                return;
+            }
+
+            // 基本IP格式验证（可选，简单起见这里不严格验证）
+            // 可以添加更复杂的正则验证
+
+            displayStatus('正在尝试连接...', '');
+            connectButton.disabled = true;
+
+            const testUrl = `http://${enteredIp}:${backendPort}/api/system/status`; // 使用一个已知的API endpoint进行验证
+            const timeout = 5000; // 连接超时时间 (毫秒)
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId); // 清除超时定时器
+
+                if (response.ok) {
+                    // 简单的验证：检查状态码即可
+                    displayStatus('连接成功，正在跳转...', 'success');
+                    localStorage.setItem('backendIp', enteredIp); // 保存成功连接的IP
+                    // 构建跳转URL并跳转
+                    window.location.href = `http://${enteredIp}:${backendPort}/app/`;
+                } else {
+                    displayStatus(`连接失败: HTTP状态码 ${response.status}`, 'error');
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    displayStatus('连接超时', 'error');
+                } else {
+                    displayStatus(`连接出错: ${error.message}`, 'error');
+                }
+            } finally {
+                connectButton.disabled = false;
+            }
+        });
+
+        // Helper function to display status messages
+        function displayStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status ' + type;
+        }
+
+        // 在输入框按下回车键时触发连接按钮点击事件
+        ipInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // 防止默认的回车行为 (例如表单提交)
+                connectButton.click();
+            }
+        });
+
+         // 如果页面加载时输入框有IP，尝试自动连接一次（可选）
+        // 可以在页面加载时尝试连接上次保存的IP，如果失败再显示输入框
+        // 这里为了简单，直接显示输入框让用户确认或修改
+        // if (savedIp) {
+        //     // 可以在这里自动调用 connectButton.click()
+        //     // connectButton.click();
+        // }
+
+    </script>
+</body>
 </html>
