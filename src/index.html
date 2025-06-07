@@ -1,22 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水源蒸馏专家模型 - 神经网络演示</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h1 class="title">水源蒸馏专家模型<br>神经网络演示</h1>
+            
+            <div class="controls">
+                <button class="btn" onclick="startAnimation()">🚀 开始蒸馏过程</button>
+                <button class="btn" onclick="resetAnimation()">🔄 重置演示</button>
+                <button class="btn" onclick="toggleConnections()">👁️ 显示/隐藏连接</button>
+            </div>
+            
+            <div class="user-input">
+                <h3>💭 请输入您的问题：</h3>
+                <textarea id="userQuestion" placeholder="例如：我需要一个高质量、低成本的蒸馏方案..."></textarea>
+                <button class="btn" onclick="analyzeQuestion()">🤖 AI智能分析</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="network" id="network">
+                <!-- 输入层：水源 -->
+                <div class="layer input-layer">
+                    <div class="node water-source" data-layer="input" data-index="0" id="node-A1">
+                        <span class="node-text">水源</span>
+                        <div class="tooltip">纯净水源 - 系统输入</div>
+                    </div>
+                </div>
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
+                <!-- 第一隐藏层：原材料 -->
+                <div class="layer hidden-layer-1">
+                    <div class="node material" data-layer="material" data-index="0" id="node-B1">
+                        <span class="node-text">糖化酶</span>
+                        <div class="tooltip">糖化酶 - 催化转化</div>
+                    </div>
+                    <div class="node material" data-layer="material" data-index="1" id="node-B2">
+                        <span class="node-text">酵母菌</span>
+                        <div class="tooltip">酵母菌 - 发酵核心</div>
+                    </div>
+                    <div class="node material" data-layer="material" data-index="2" id="node-B3">
+                        <span class="node-text">营养盐</span>
+                        <div class="tooltip">营养盐 - 提供养分</div>
+                    </div>
+                    <div class="node material" data-layer="material" data-index="3" id="node-B4">
+                        <span class="node-text">pH调节剂</span>
+                        <div class="tooltip">pH调节剂 - 环境优化</div>
+                    </div>
+                </div>
 
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
-    </body>
-</html>
+                <!-- 第二隐藏层：蒸馏方法 -->
+                <div class="layer hidden-layer-2">
+                    <div class="node distillation" data-layer="distillation" data-index="0" id="node-C1">
+                        <span class="node-text">单次蒸馏</span>
+                        <div class="tooltip">单次蒸馏 - 基础分离</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="1" id="node-C2">
+                        <span class="node-text">二次蒸馏</span>
+                        <div class="tooltip">二次蒸馏 - 精细提纯</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="2" id="node-C3">
+                        <span class="node-text">分馏蒸馏</span>
+                        <div class="tooltip">分馏蒸馏 - 分段收集</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="3" id="node-C4">
+                        <span class="node-text">减压蒸馏</span>
+                        <div class="tooltip">减压蒸馏 - 低温处理</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="4" id="node-C5">
+                        <span class="node-text">水蒸气蒸馏</span>
+                        <div class="tooltip">水蒸气蒸馏 - 温和提取</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="5" id="node-C6">
+                        <span class="node-text">共沸蒸馏</span>
+                        <div class="tooltip">共沸蒸馏 - 组分分离</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="6" id="node-C7">
+                        <span class="node-text">分子蒸馏</span>
+                        <div class="tooltip">分子蒸馏 - 高纯度</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="7" id="node-C8">
+                        <span class="node-text">膜蒸馏</span>
+                        <div class="tooltip">膜蒸馏 - 新型技术</div>
+                    </div>
+                    <div class="node distillation" data-layer="distillation" data-index="8" id="node-C9">
+                        <span class="node-text">反应蒸馏</span>
+                        <div class="tooltip">反应蒸馏 - 一体化</div>
+                    </div>
+                </div>
+
+                <!-- 输出层：专家模型 -->
+                <div class="layer output-layer">
+                    <div class="node expert" data-layer="expert" data-index="0" id="node-D1">
+                        <span class="node-text">质量专家</span>
+                        <div class="tooltip">质量控制专家模型</div>
+                    </div>
+                    <div class="node expert" data-layer="expert" data-index="1" id="node-D2">
+                        <span class="node-text">效率专家</span>
+                        <div class="tooltip">生产效率专家模型</div>
+                    </div>
+                    <div class="node expert" data-layer="expert" data-index="2" id="node-D3">
+                        <span class="node-text">成本专家</span>
+                        <div class="tooltip">成本优化专家模型</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #4FC3F7, #29B6F6);"></div>
+                    <span>水源输入层</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #66BB6A, #4CAF50);"></div>
+                    <span>原材料层</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #FF7043, #FF5722);"></div>
+                    <span>蒸馏方法层</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(45deg, #AB47BC, #9C27B0);"></div>
+                    <span>专家模型输出层</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="config-btn" onclick="openConfig()">⚙️ 配置</button>
+
+    <!-- 配置弹窗 -->
+    <div id="configModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeConfig()">&times;</span>
+            <h2>系统配置</h2>
+            
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('layer1')">第一层配置</button>
+                <button class="tab-button" onclick="showTab('layer2')">第二层配置</button>
+                <button class="tab-button" onclick="showTab('layer3')">第三层配置</button>
+                <button class="tab-button" onclick="showTab('layer4')">第四层配置</button>
+                <button class="tab-button" onclick="showTab('examples')">示例配置</button>
+                <button class="tab-button" onclick="showTab('openai')">AI配置</button>
+            </div>
+
+            <!-- 层级配置TAB -->
+            <div id="layer1" class="tab-content active">
+                <h3>第一层 - 输入层配置</h3>
+                <div class="form-group">
+                    <label>层名称：</label>
+                    <input type="text" id="layer1Name" value="水源输入层">
+                </div>
+                <div class="form-group">
+                    <label>层含义：</label>
+                    <textarea id="layer1Meaning">系统的原始输入数据源</textarea>
+                </div>
+                <div class="form-group">
+                    <label>节点名称：</label>
+                    <div id="layer1Nodes" class="features-list"></div>
+                </div>
+                <div class="form-group">
+                    <label>特征列表：</label>
+                    <div id="layer1Features" class="features-list"></div>
+                    <button class="add-feature-btn" onclick="addFeature('layer1')">添加特征</button>
+                </div>
+            </div>
+
+            <div id="layer2" class="tab-content">
+                <h3>第二层 - 原材料层配置</h3>
+                <div class="form-group">
+                    <label>层名称：</label>
+                    <input type="text" id="layer2Name" value="原材料层">
+                </div>
+                <div class="form-group">
+                    <label>层含义：</label>
+                    <textarea id="layer2Meaning">处理输入的各种原材料和催化剂</textarea>
+                </div>
+                <div class="form-group">
+                    <label>节点名称：</label>
+                    <div id="layer2Nodes" class="features-list"></div>
+                </div>
+                <div class="form-group">
+                    <label>特征列表：</label>
+                    <div id="layer2Features" class="features-list"></div>
+                    <button class="add-feature-btn" onclick="addFeature('layer2')">添加特征</button>
+                </div>
+            </div>
+
+            <div id="layer3" class="tab-content">
+                <h3>第三层 - 蒸馏方法层配置</h3>
+                <div class="form-group">
+                    <label>层名称：</label>
+                    <input type="text" id="layer3Name" value="蒸馏方法层">
+                </div>
+                <div class="form-group">
+                    <label>层含义：</label>
+                    <textarea id="layer3Meaning">各种蒸馏技术和处理方法</textarea>
+                </div>
+                <div class="form-group">
+                    <label>节点名称：</label>
+                    <div id="layer3Nodes" class="features-list"></div>
+                </div>
+                <div class="form-group">
+                    <label>特征列表：</label>
+                    <div id="layer3Features" class="features-list"></div>
+                    <button class="add-feature-btn" onclick="addFeature('layer3')">添加特征</button>
+                </div>
+            </div>
+
+            <div id="layer4" class="tab-content">
+                <h3>第四层 - 输出层配置</h3>
+                <div class="form-group">
+                    <label>层名称：</label>
+                    <input type="text" id="layer4Name" value="专家模型输出层">
+                </div>
+                <div class="form-group">
+                    <label>层含义：</label>
+                    <textarea id="layer4Meaning">最终的专家决策输出</textarea>
+                </div>
+                <div class="form-group">
+                    <label>节点名称：</label>
+                    <div id="layer4Nodes" class="features-list"></div>
+                </div>
+                <div class="form-group">
+                    <label>特征列表：</label>
+                    <div id="layer4Features" class="features-list"></div>
+                    <button class="add-feature-btn" onclick="addFeature('layer4')">添加特征</button>
+                </div>
+            </div>
+
+            <!-- 示例配置TAB -->
+            <div id="examples" class="tab-content">
+                <h3>示例配置 - 传播路径</h3>
+                <div id="examplesList">
+                    <div class="example-config">
+                        <h4>示例1：质量优化路径</h4>
+                        <p>用户问题：需要高质量产品</p>
+                        <p>推荐路径：A1 → B1,B2 → C1,C3,C5 → D1</p>
+                        <p>逻辑：使用糖化酶和酵母菌，通过精细蒸馏方法，输出到质量专家</p>
+                    </div>
+                    <div class="example-config">
+                        <h4>示例2：效率优化路径</h4>
+                        <p>用户问题：需要快速生产</p>
+                        <p>推荐路径：A1 → B2,B4 → C2,C4,C6,C8 → D2</p>
+                        <p>逻辑：使用快速发酵和环境优化，采用高效蒸馏方法，输出到效率专家</p>
+                    </div>
+                </div>
+                <button class="add-feature-btn" onclick="addExample()">添加示例</button>
+            </div>
+
+            <!-- OpenAI配置TAB -->
+            <div id="openai" class="tab-content">
+                <h3>OpenAI API 配置</h3>
+                <div class="form-group">
+                    <label>API URL：</label>
+                    <input type="text" id="openaiUrl" value="https://api.openai.com/v1/chat/completions">
+                </div>
+                <div class="form-group">
+                    <label>API Key：</label>
+                    <input type="password" id="openaiKey" placeholder="输入您的OpenAI API Key">
+                </div>
+                <div class="form-group">
+                    <label>模型名称：</label>
+                    <input type="text" id="openaiModel" value="gpt-3.5-turbo">
+                </div>
+            </div>
+
+            <button class="save-btn" onclick="saveConfig()">保存配置</button>
+            <button class="save-btn" onclick="exportConfig()" style="background: linear-gradient(45deg, #28a745, #218838); margin-left: 10px;">导出配置</button>
+            <input type="file" id="importConfigInput" accept=".json" style="display: none;" onchange="importConfig(event)">
+            <button class="save-btn" onclick="document.getElementById('importConfigInput').click()" style="background: linear-gradient(45deg, #FFC107, #FFA000); margin-left: 10px;">导入配置</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
