@@ -1,0 +1,488 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+            width: 100%;
+            height: 90vh;
+            display: flex;
+            gap: 20px;
+        }
+
+        .left-panel {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+
+        .layer-info {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .layer-info h4 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .layer-info p {
+            margin: 0 0 5px 0;
+            color: #666;
+        }
+
+        .layer-nodes {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-input {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .user-input h3 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .user-input textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .network {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 500px;
+            overflow: hidden;
+        }
+
+        .legend {
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .layer {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+        }
+
+        .input-layer {
+            left: 5%;
+            width: 15%;
+        }
+
+        .hidden-layer-1 {
+            left: 30%;
+            width: 15%;
+        }
+
+        .hidden-layer-2 {
+            left: 55%;
+            width: 15%;
+        }
+
+        .output-layer {
+            left: 80%;
+            width: 15%;
+        }
+
+        .node {
+            position: relative;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .water-source {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4FC3F7, #29B6F6);
+            animation: pulse 2s infinite;
+        }
+
+        .material {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #66BB6A, #4CAF50);
+            margin: 10px 0;
+        }
+
+        .distillation {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #FF7043, #FF5722);
+            margin: 5px 0;
+        }
+
+        .expert {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, #AB47BC, #9C27B0);
+            margin: 15px 0;
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+            transform-origin: left center;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .connection.active {
+            background: linear-gradient(90deg, #FFD54F, #FFC107, #FFD54F, #FFC107);
+            background-size: 200% 100%;
+            opacity: 1;
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+            animation: dataFlow 1.5s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes flow {
+            0% { 
+                transform: scaleX(0);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: scaleX(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: scaleX(0);
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes dataFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes nodeActivate {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            50% { 
+                transform: scale(1.15);
+                box-shadow: 0 8px 20px rgba(255, 255, 255, 0.4);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .node.active {
+            animation: nodeActivate 0.8s ease-in-out;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .node:hover .tooltip {
+            opacity: 1;
+        }
+
+        .config-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .config-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 60px;
+            resize: vertical;
+        }
+
+        .features-list {
+            margin-top: 10px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .feature-item input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .add-feature-btn, .remove-feature-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .add-feature-btn {
+            background: #4CAF50;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .remove-feature-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .save-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .example-config {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .pathway-config {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .layer-select {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        } 
